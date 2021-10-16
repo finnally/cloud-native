@@ -13,4 +13,4 @@ release: build
 
 push: release
 	echo "pushing image to hellionc/httpserver"
-	docker push hellionc/httpserver:v1.0
+	docker push hellionc/httpserver:${tag}
