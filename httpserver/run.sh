@@ -25,14 +25,9 @@ run () {
     fi
     
     docker run -d --name=${container_name} $image
-    
-    pid=$(docker inspect -f {{.State.Pid}} ${container_name})
-    if ! which nsenter;then
-        color_print failed "nsenter command not found."
-        exit 404
-    fi
-    
+
     color_print info "view ${container_name} ip configuration."
+    pid=$(docker inspect -f {{.State.Pid}} ${container_name})
     if ! which nsenter >/dev/null 2>&1;then
         color_print failed "nsenter command not found."
         exit 404
