@@ -1,5 +1,7 @@
 export tag=v1.0
-root:
+export dockerhub_username=hellionc
+export dockerhub_password=MTk4ODAxMzE
+set env:
 	export ROOT=github.com/cloud-native
 	export GO111MODULE=off
 
@@ -14,4 +16,5 @@ release: build
 
 push: release
 	echo "pushing image to hellionc/httpserver"
+	docker login -u="${dockerhub_username}" -p="${dockerhub_password}"
 	docker push hellionc/httpserver:${tag}
