@@ -39,6 +39,5 @@ run () {
     docker rm -f ${container_name}
 }
 
-color_print info "build httpserver image and push"
 make push
 run
