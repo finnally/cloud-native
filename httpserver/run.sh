@@ -36,8 +36,8 @@ run () {
 
     color_print info "docker image and container clean."
     kill $pid
-    docker rmi $image
     docker rm ${container_name}
+    docker rmi $image
 }
 
 make -s push
