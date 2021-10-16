@@ -1,6 +1,7 @@
 export tag=v1.0
 root:
 	export ROOT=github.com/cloud-native
+	export GO111MODULE=off
 
 build:
 	echo "building httpserver binary"
