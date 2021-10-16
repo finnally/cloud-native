@@ -35,8 +35,9 @@ run () {
     nsenter -t $pid -n ip a
 
     color_print info "docker image and container clean."
+    kill $pid
     docker rmi $image
-    docker rm -f ${container_name}
+    docker rm ${container_name}
 }
 
 make -s push

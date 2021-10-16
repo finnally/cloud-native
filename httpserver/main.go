@@ -1,11 +1,16 @@
 package main
 
 import (
+	"context"
+	"flag"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
+	"time"
 )
 
 /*
@@ -82,11 +87,40 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.Handle("/", newHandler(http.HandlerFunc(notFoundHandler)))
-	http.Handle("/index", newHandler(http.HandlerFunc(indexHandler)))
-	http.Handle("/healthz", newHandler(http.HandlerFunc(healthzHandler)))
-	err := http.ListenAndServe("localhost:80", nil)
-	if err != nil {
-		log.Fatal(err)
+	addr := flag.String("server addr", "localhost:8080", "server address")
+	mux := http.NewServeMux()
+	mux.Handle("/", newHandler(http.HandlerFunc(notFoundHandler)))
+	mux.Handle("/index", newHandler(http.HandlerFunc(indexHandler)))
+	mux.Handle("/healthz", newHandler(http.HandlerFunc(healthzHandler)))
+
+	server := http.Server{
+		Addr:    *addr,
+		Handler: mux,
 	}
+	// make sure idle connections returned
+	processed := make(chan struct{})
+	go func() {
+		quitChan := make(chan os.Signal, 1)
+		signal.Notify(quitChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
+		<-quitChan
+
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+		if err := server.Shutdown(ctx); nil != err {
+			log.Fatalf("server shutdown failed, err: %v\n", err)
+		}
+		log.Println("server gracefully shutdown.")
+
+		close(processed)
+	}()
+
+	// server
+	log.Printf("httpserver started on %v.", *addr)
+	err := server.ListenAndServe()
+	if http.ErrServerClosed != err {
+		log.Fatalf("server not gracefully shutdown, err :%v\n", err)
+	}
+
+	// waiting for goroutine above processed
+	<-processed
 }
