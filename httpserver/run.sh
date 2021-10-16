@@ -39,5 +39,5 @@ run () {
     docker rm -f ${container_name}
 }
 
-make push
+make -s push
 run
