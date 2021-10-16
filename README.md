@@ -1,3 +1,3 @@
 # cloud-native
 
-chmod +x run.sh && ./run.sh
+bash run.sh
