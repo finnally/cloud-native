@@ -5,6 +5,7 @@ metadata:
   labels:
     app: envoy
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: envoy
@@ -17,13 +18,16 @@ spec:
       - name: envoy
         image: envoyproxy:latest
         imagePullPolicy: IfNotPresent
-        env:
-        - name: "ENVOY_LB_ALG"
-          value: "LEAST_REQUEST"
-        - name: "SERVICE_NAME"
-          value: "envoy"
+        volumeMounts:
+        - name: envoy-config
+          mountPath: "/etc/envoy"
+          readOnly: true
         ports:
         - name: http
           containerPort: 80
         - name: envoy-admin
           containerPort: 9901
+      volumes:
+      - name: envoy-config
+        configMap:
+          name: envoy-config
