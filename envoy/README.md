@@ -5,7 +5,7 @@ Using kubectl
 
 Run the following command:
 ```
-kubectl delete deployment nginx-deployment --cascade=orphan
+kubectl delete deployment envoy-deployment --cascade=orphan
 ```
 Using the Kubernetes API
 
@@ -14,7 +14,7 @@ Start a local proxy session:
 kubectl proxy --port=8080
 Use curl to trigger deletion:
 ```
-curl -X DELETE localhost:8080/apis/apps/v1/namespaces/default/deployments/nginx-deployment \
+curl -X DELETE localhost:8080/apis/apps/v1/namespaces/default/deployments/envoy-deployment \
     -d '{"kind":"DeleteOptions","apiVersion":"v1","propagationPolicy":"Orphan"}' \
     -H "Content-Type: application/json"
 ```
@@ -34,6 +34,6 @@ The output contains orphan in the finalizers field, similar to this:
 ```
 You can check that the Pods managed by the Deployment are still running:
 ```
-kubectl get pods -l app=nginx
+kubectl get pods -l app=envoy
 ```
 Reference: https://kubernetes.io/docs/tasks/administer-cluster/use-cascading-deletion/
