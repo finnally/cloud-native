@@ -6,8 +6,9 @@ Using kubectl
 Run the following command:
 ```
 kubectl delete deployment nginx-deployment --cascade=orphan
-Using the Kubernetes API
 ```
+Using the Kubernetes API
+
 Start a local proxy session:
 
 kubectl proxy --port=8080
