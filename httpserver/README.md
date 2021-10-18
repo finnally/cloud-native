@@ -10,7 +10,7 @@ run.sh 内容：
 * 通过inspect找到容器pid，用nsenter命令查看容器内IP配置
 
 ```
-bash run.sh
+bash clean.sh
 ```
 
 clean.sh 内容：
