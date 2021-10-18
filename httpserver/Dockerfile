@@ -4,6 +4,6 @@ WORKDIR /go/src/
 RUN GO111MODULE=off CGO_ENABLED=0 go build -o /tmp/httpserver
 
 FROM scratch
-COPY --from=build /tmp/httpserver /httpserver
+COPY --from=build /tmp/httpserver /bin/httpserver
 EXPOSE 80
-ENTRYPOINT ["/httpserver"]
+ENTRYPOINT ["/bin/httpserver"]
