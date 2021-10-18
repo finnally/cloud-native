@@ -7,3 +7,4 @@ echo -e "\033[1;32mremove container ${container_name} and image ${image_name}\03
 pid=$(docker inspect -f {{.State.Pid}} ${container_name} 2>/dev/null)
 kill $pid && sleep 2 && docker rm ${container_name}
 docker rmi ${image_name}
+rm -f /tmp/.info
