@@ -1,7 +1,7 @@
 #!/bin/bash 
 
 container_name="httpserver-$RANDOM"
-image="hellionc/httpserver:v1.0"
+image_name="hellionc/httpserver:v1.0"
 
 color_print () {
     case $1 in
@@ -15,6 +15,7 @@ color_print () {
 }
 
 run () {
+    echo ${container_name} ${image_name} > /tmp/.info
     color_print info "start docker container ${container_name} ..."
     if ! which docker >/dev/null 2>&1;then
         color_print failed "docker command not found."
@@ -24,24 +25,18 @@ run () {
         exit 500
     fi
     
-    docker run -d --name=${container_name} $image
+    docker run -d --name=${container_name} -P ${image_name}
 
     color_print info "view ${container_name} ip configuration."
     pid=$(docker inspect -f {{.State.Pid}} ${container_name} 2>/dev/null)
     if [ "$pid" -eq 0 ];then
         color_print failed "container ${container_name} run failed."
-        exit 500
     fi
     if ! which nsenter >/dev/null 2>&1;then
         color_print failed "nsenter command not found."
         exit 404
     fi
     nsenter -t $pid -n ip a
-
-    color_print info "docker image and container clean."
-    kill $pid
-    docker rm ${container_name}
-    docker rmi $image
 }
 
 make -s push
