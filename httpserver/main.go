@@ -87,7 +87,7 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	addr := flag.String("server addr", "localhost:8080", "server address")
+	addr := flag.String("server addr", "0.0.0.0:8080", "server address")
 	mux := http.NewServeMux()
 	mux.Handle("/", newHandler(http.HandlerFunc(notFoundHandler)))
 	mux.Handle("/index", newHandler(http.HandlerFunc(indexHandler)))
