@@ -16,3 +16,22 @@ bash clean.sh
 clean.sh 内容：
 * 停止并删除容器
 * 删除构建的镜像
+
+```
+bash deploy.sh deploy
+```
+* 部署 httpserver-deployment.yaml
+* 部署 ingress-deployment.yaml
+* 生成SSL证书并创建secret (secret.yaml)
+* 创建ingress (ingress.yaml)
+
+```
+bash deploy.sh accessTest
+```
+* 通过 ingress service clusterIp 访问httpserver服务
+* 通过主机名访问httpserver服务
+
+```
+bash deploy.sh clean
+```
+* 删除所有deploy创建的对象
