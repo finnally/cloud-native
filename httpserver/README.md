@@ -63,8 +63,8 @@ ls -lh $(docker inspect -f {{.LogPath}} $(docker ps | awk '/httpserver/&&!/pause
 ls -lh $(docker inspect -f {{.LogPath}} $(docker ps | awk '/httpserver/&&!/pause/{print $1}' | head -1))* 
 ```
   
-*实际生产环境中需要根据业务情况调整logrotate配置，可选择按天或者按文件大小两种方式进行日志切分，同时还可以设置是否压缩，保存个数等配置。
-由于logrotate默认按天执行，当执行条件不能满足需求时，可以通过设置crontab以期望的时间间隔来执行。*
+**实际生产环境中需要根据业务情况调整logrotate配置，可选择按天或者按文件大小两种方式进行日志切分，同时还可以设置是否压缩，保存个数等配置。
+由于logrotate默认按天执行，当执行条件不能满足需求时，可以通过设置crontab以期望的时间间隔来执行。**
 ***
 ## part 3
 ```
