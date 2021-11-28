@@ -59,7 +59,6 @@ ls -lh $(docker inspect -f {{.LogPath}} $(docker ps | awk '/httpserver/&&!/pause
   
 ```
 logrotate -f /etc/logrotate.d/httpserver
-ls -lh $(docker inspect -f {{.LogPath}} $(docker ps | awk '/httpserver/&&!/pause/{print $1}' | head -1))
 ls -lh $(docker inspect -f {{.LogPath}} $(docker ps | awk '/httpserver/&&!/pause/{print $1}' | head -1))* 
 ```
   
