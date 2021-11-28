@@ -19,6 +19,7 @@ clean.sh 内容：
 
 
 # 部署部分
+## part 1
 ```
 bash deploy.sh deploy
 ```
@@ -30,6 +31,7 @@ bash deploy.sh deploy
 
 **deploy过程中可能会因为ingress-controller未完全启动导致ingress.yaml创建失败，此时需要手动执行 kubectl apply -f ingress.yaml 来创建。**
 ***
+## part 2
 ```
 bash deploy.sh accessTest
 ```
@@ -68,6 +70,7 @@ root@k8snode:~# ls -lh $(docker inspect -f {{.LogPath}} $(docker ps | awk '/http
 实际生产环境中需要根据业务情况调整logrotate配置，可选择按天或者按文件大小两种方式进行日志切分，同时还可以设置是否压缩，保存个数等配置。
 由于logrotate默认按天执行，当执行条件不能满足需求时，可以通过设置crontab以期望的时间间隔来执行。
 ***
+## part 3
 ```
 bash deploy.sh clean
 ```
