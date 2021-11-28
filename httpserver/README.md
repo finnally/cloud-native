@@ -45,8 +45,10 @@ bash deploy.sh logrotateConfig
 功能：
 * 配置httpserver的logrotate实现日志切分
 
-* 以下部分为手动测试：
+以下部分为手动测试：
+
 // 生成一个10M文件，并将文件内容追加到httpserver日志中
+
 root@k8snode:~# dd if=/dev/zero of=/tmp/testfile count=10240 bs=1024
 10240+0 records in
 10240+0 records out
@@ -58,6 +60,7 @@ root@k8snode:~# ls -lh $(docker inspect -f {{.LogPath}} $(docker ps | awk '/http
 -rw-r----- 1 root root 11M Nov 28 10:18 /var/lib/docker/containers/8abc6a21d7d93b56f7496f2e486070d246a108d1c638636e527a05957a7badf6/8abc6a21d7d93b56f7496f2e486070d246a108d1c638636e527a05957a7badf6-json.log
 
 // 因为脚本生成的配置是日志文件大小超过10M后进行切分，执行logrotate命令，检查切分是否成功。json.log.1后缀的文件即为切分后保存的日志
+
 root@k8snode:~# logrotate -f /etc/logrotate.d/httpserver
 
 root@k8snode:~# ls -lh $(docker inspect -f {{.LogPath}} $(docker ps | awk '/httpserver/&&!/pause/{print $1}' | head -1))
