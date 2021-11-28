@@ -43,6 +43,27 @@ accessTest() {
     curl -H "Host: hellion.com" https://$(hostname):${nodePort}/index -k ; echo
 }
 
+logrotateConfig() {
+    containerId=$(docker ps | awk '/httpserver/&&!/pause/{print $1}')
+    touch /etc/logrotate.d/httpserver && >/etc/logrotate.d/httpserver
+    for id in ${containerId}
+    do
+        logPath=$(docker inspect -f {{.LogPath}} $id)
+        cat >> /etc/logrotate.d/httpserver <<EOF
+${logPath} {
+	create 644 root root
+	notifempty
+	missingok
+	copytruncate
+	noolddir
+	rotate 2
+	size=10M
+}
+
+EOF
+    done
+}
+
 clean() {
     for yaml in $yamlConfig
     do
@@ -51,7 +72,7 @@ clean() {
 }
 
 if [ -z $1 ];then
-    echo "Usage: bash $0 deploy|accessTest|clean"
+    echo "Usage: bash $0 deploy|accessTest|logrotateConfig|clean"
 fi
 
 cd manifests
@@ -61,6 +82,9 @@ deploy)
     ;;
 accessTest)
     accessTest
+    ;;
+logrotateConfig)
+    logrotateConfig
     ;;
 clean)
     clean
