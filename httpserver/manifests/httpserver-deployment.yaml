@@ -58,6 +58,3 @@ spec:
           timeoutSeconds: 1
           periodSeconds: 3
       terminationGracePeriodSeconds: 60
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 2000
