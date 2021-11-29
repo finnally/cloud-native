@@ -18,7 +18,6 @@ deploy() {
 	    do
 		controllerName=$(kubectl get pod -n ingress-nginx | awk '/controller/{print $1}')
 		controllerStatus=$(kubectl get pod -n ingress-nginx | awk '/controller/{print $3}')
-		kubectl logs ${controllerName} -n ingress-nginx
 		if [ ${controllerStatus} == "Running" ];then
 		    break
 		fi
