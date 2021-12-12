@@ -1,4 +1,4 @@
-export tag=v1.0
+export tag=v2.0
 export dockerhub_username=hellionc
 export dockerhub_password=MTk4ODAxMzE
 
