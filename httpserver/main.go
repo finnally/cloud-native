@@ -1,16 +1,20 @@
 package main
 
 import (
+	"cloud-native-study/httpserver/metrics"
 	"context"
 	"flag"
 	"io"
-	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/golang/glog"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type newResponseWriter struct {
@@ -51,17 +55,28 @@ func newHandler(handler http.Handler) http.Handler {
 		remoteAddr := r.RemoteAddr
 		lastIndex := strings.LastIndex(remoteAddr, ":")
 		clientIP := remoteAddr[:lastIndex]
-		log.Printf("%s %s %s %d %s", clientIP, r.Method, r.URL.Path, statusCode, http.StatusText(statusCode))
+		glog.Infof("%s %s %s %d %s", clientIP, r.Method, r.URL.Path, statusCode, http.StatusText(statusCode))
 	})
 }
 
+func randInt(min, max int) int {
+	rand.Seed(time.Now().UTC().UnixNano())
+	return min + rand.Intn(max-min)
+}
+
 func indexHandler(w http.ResponseWriter, r *http.Request) {
+	glog.V(4).Info("Entering index handler")
+	timer := metrics.NewTimer()
+	defer timer.ObserveTotal()
+	delay := randInt(10, 2000)
+	time.Sleep(time.Millisecond * time.Duration(delay))
 	if r.Method == http.MethodGet {
 		io.WriteString(w, "<h1>Home page</h1>")
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		io.WriteString(w, "Method not allowed.")
 	}
+	glog.V(4).Infof("Respond in %d ms", delay)
 }
 
 func healthzHandler(w http.ResponseWriter, r *http.Request) {
@@ -80,11 +95,15 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	flag.Set("v", "4")
+	glog.V(2).Info("Starting http server...")
+	metrics.Register()
 	addr := flag.String("server addr", "0.0.0.0:80", "server address")
 	mux := http.NewServeMux()
 	mux.Handle("/", newHandler(http.HandlerFunc(notFoundHandler)))
 	mux.Handle("/index", newHandler(http.HandlerFunc(indexHandler)))
 	mux.Handle("/healthz", newHandler(http.HandlerFunc(healthzHandler)))
+	mux.Handle("/metrics", promhttp.Handler())
 
 	server := http.Server{
 		Addr:    *addr,
@@ -100,18 +119,18 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 		defer cancel()
 		if err := server.Shutdown(ctx); nil != err {
-			log.Fatalf("server shutdown failed, err: %v\n", err)
+			glog.Fatalf("server shutdown failed, err: %v", err)
 		}
-		log.Println("server gracefully shutdown.")
+		glog.Info("server gracefully shutdown.")
 
 		close(processed)
 	}()
 
 	// server
-	log.Printf("httpserver started on %v.", *addr)
+	glog.Infof("httpserver started on %v.", *addr)
 	err := server.ListenAndServe()
 	if http.ErrServerClosed != err {
-		log.Fatalf("server not gracefully shutdown, err :%v\n", err)
+		glog.Fatalf("server not gracefully shutdown, err: %v", err)
 	}
 
 	// waiting for goroutine above processed
