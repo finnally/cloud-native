@@ -17,7 +17,7 @@ kubectl edit svc loki-prometheus-server
 ```
 
 登录prometheus查看指标采集结果：
-
+![image](https://github.com/AngelSXD/sxd_first_repository/blob/master/images/20160615165142.png)
 
 登录grafana，导入dashboard/httpserver-latency.json并查看：
-
+![image](https://github.com/AngelSXD/sxd_first_repository/blob/master/images/20160615165142.png)
