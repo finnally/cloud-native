@@ -4,6 +4,7 @@ import (
 	"cloud-native-study/httpserver/metrics"
 	"context"
 	"flag"
+	"fmt"
 	"io"
 	"math/rand"
 	"net/http"
@@ -68,7 +69,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	glog.V(4).Info("Entering index handler")
 	timer := metrics.NewTimer()
 	defer timer.ObserveTotal()
-	delay := randInt(10, 2000)
+	delay := randInt(1000, 2000)
+	fmt.Println(delay)
 	time.Sleep(time.Millisecond * time.Duration(delay))
 	if r.Method == http.MethodGet {
 		io.WriteString(w, "<h1>Home page</h1>")
