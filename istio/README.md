@@ -57,7 +57,7 @@ kubectl apply -f toolbox.yaml -nsecns<br>
 * 进入toolbox测试，v1不带metrics，v2带metrics<br>
 TOOL_IP=$(kubectl get pod -nsecns | awk '/toolbox/{print $1}')<br>
 kubectl exec -it $TOOL_IP -nsecns -- bash<br>
-* 指定headers："user: test"访问v2版本，非user值不是test或未指定headers访问v1版本
+* 指定headers："user: test"访问v2版本，user值不是test或未指定headers访问v1版本
 curl httpserver/metrics -H 'user: test'<br>
 curl httpserver/metrics -H 'user: admin';echo<br>
 curl httpserver/metrics;echo<br>
