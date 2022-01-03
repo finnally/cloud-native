@@ -1,0 +1,48 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: httpserver-api
+spec:
+  gateways:
+    - httpserver-api
+  hosts:
+    - httpserver.cns.io
+  http:
+  - match:
+    - uri:
+        exact: "/api/healthz"
+    rewrite:
+      uri: "/healthz"
+    route:
+      - destination:
+          host: httpserver.secns.svc.cluster.local
+          port:
+            number: 80
+  - match:
+    - uri:
+        prefix: "/api"
+    rewrite:
+      uri: "/index"
+    route:
+      - destination:
+          host: httpserver.secns.svc.cluster.local
+          port:
+            number: 80
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: httpserver-api
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - hosts:
+        - httpserver.cns.io
+      port:
+        name: https-api
+        number: 443
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: cns-credential
