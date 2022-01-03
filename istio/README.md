@@ -35,15 +35,14 @@ root@k8snode:~/cloud-native-study/istio# curl --resolve httpserver.cns.io:443:$I
 ## 二、七层路由
 * 创建路由规则并测试，/api/healthz重写为/healthz，/api重写为/index
 kubectl apply -f istio-r7.yaml -nsecns<br>
-curl -H "Host: httpserver.cns.io" $INGRESS_IP/api/healthz;echo<br>
-curl -H "Host: httpserver.cns.io" $INGRESS_IP/api;echo<br>
+curl --resolve api.httpserver.cns.io:443:$INGRESS_IP https://api.httpserver.cns.io/api/healthz -k;echo<br>
+curl --resolve api.httpserver.cns.io:443:$INGRESS_IP https://api.httpserver.cns.io/api -k;echo<br>
 
 ```
-root@k8snode:~/cloud-native-study/istio# curl -H "Host: httpserver.cns.io" $INGRESS_IP/api;echo
-<h1>Home page</h1>
-root@k8snode:~/cloud-native-study/istio# 
-root@k8snode:~/cloud-native-study/istio# curl -H "Host: httpserver.cns.io" $INGRESS_IP/api/healthz;echo
+root@k8snode:~# curl --resolve api.httpserver.cns.io:443:$INGRESS_IP https://api.httpserver.cns.io/api/healthz -k;echo
 200
+root@k8snode:~# curl --resolve api.httpserver.cns.io:443:$INGRESS_IP https://api.httpserver.cns.io/api -k;echo
+<h1>Home page</h1>
 ```
 
 

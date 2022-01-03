@@ -6,10 +6,11 @@ spec:
   gateways:
     - httpserver-api
   hosts:
-    - httpserver.cns.io
+    - api.httpserver.cns.io
   http:
   - match:
-    - uri:
+    - port: 443
+      uri:
         exact: "/api/healthz"
     rewrite:
       uri: "/healthz"
@@ -19,7 +20,8 @@ spec:
           port:
             number: 80
   - match:
-    - uri:
+    - port: 443
+      uri:
         prefix: "/api"
     rewrite:
       uri: "/index"
@@ -38,8 +40,11 @@ spec:
     istio: ingressgateway
   servers:
     - hosts:
-        - httpserver.cns.io
+        - api.httpserver.cns.io
       port:
         name: https-api
-        number: 80
-        protocol: HTTP
+        number: 443
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: cns-credential
